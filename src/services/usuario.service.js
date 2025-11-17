@@ -26,7 +26,7 @@ async function findUsuarioByIdService(id) {
 }
 
 async function updateUsuarioService(novoUsuario, id) {
-    const usuario = await UsuarioRepository.findUsuarioByIdRepository(id);
+    const usuario = await usuarioRepository.findUsuarioByIdRepository(id);
     
     if (!usuario) {
         throw new Error("Usuario não encontrado");

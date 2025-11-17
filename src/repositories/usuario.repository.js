@@ -1,7 +1,7 @@
 import db from '../config/database.js';
 
 db.run(`
-    CREATE TABLE IF NOT EXISTS usuarios (
+    CREATE TABLE IF NOT EXISTS usuario (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         login TEXT NOT NULL,
         email TEXT UNIQUE NOT NULL,
@@ -24,7 +24,7 @@ function createUsuarioRepository(novoUsuario) {
         db.run(
             `INSERT INTO usuario (login, email, senha, foto)
             VALUES(?,?,?,?)`,
-            [id, login, email, senha, foto],
+            [login, email, senha, foto],
             (error) => {
                 if(error) {
                     reject(error);
@@ -78,7 +78,7 @@ function findAllUsuarioRepository() {
 
 }
 
-function updateUsuarioRepository(id, cliente) {
+function updateUsuarioRepository(id, usuario) {
     return new Promise((resolve, reject) => {
 
         const {
@@ -86,7 +86,7 @@ function updateUsuarioRepository(id, cliente) {
             email, 
             senha, 
             foto
-        } = cliente;
+        } = usuario;
 
         db.run(
             `UPDATE usuario SET 

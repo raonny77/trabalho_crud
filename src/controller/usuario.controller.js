@@ -1,4 +1,4 @@
-import usuarioService from '../services/cliente.service.js';
+import usuarioService from '../services/usuario.service.js';
 
 async function createUsuarioController(request, response) {
     const novoUsuario = request.body;
@@ -13,7 +13,7 @@ async function createUsuarioController(request, response) {
 
 async function findAllUsuarioController(request, response) {
      try {
-        const clientes = await UsuarioService.findAllUsuarioService();
+        const usuarios = await usuarioService.findAllUsuarioService();
         response.status(200).send({usuarios});
      } catch(error) {
         return response.status(404).send(error.message);
@@ -47,7 +47,7 @@ async function deleteUsuarioController(request, response) {
     const {id} = request.params;
 
     try {
-        const mensagemRetorno = await usuarioService.deleteusuarioService(id);
+        const mensagemRetorno = await usuarioService.deleteUsuarioService(id);
         response.status(200).send({mensagemRetorno});
     } catch (error) {
         return response.status(400).send(error.message);
