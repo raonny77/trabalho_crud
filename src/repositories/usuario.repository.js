@@ -2,45 +2,128 @@ import db from '../config/database.js';
 
 db.run(`
     CREATE TABLE IF NOT EXISTS usuarios (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    login TEXT NOT NULL UNIQUE,
-    email TEXT NOT NULL UNIQUE,
-    senha TEXT NOT NULL,
-    foto TEXT
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        login TEXT NOT NULL,
+        email TEXT UNIQUE NOT NULL,
+        senha TEXT NOT NULL,
+        foto TEXT
     )
 `);
 
 function createUsuarioRepository(novoUsuario) {
     return new Promise((resolve, reject) => {
-        const { login, email, senha, foto } = novoUsuario;
+
+        const {
+            id, 
+            login,
+            email,
+            senha,
+            foto
+        } = novoUsuario;
 
         db.run(
-            `INSERT INTO usuarios (login, email, senha, foto) 
-            VALUES (?, ?, ?, ?)`,
-            [login, email, senha, foto],
-            function (err) {
-                if (err) {
-                    return reject(err);
+            `INSERT INTO usuario (login, email, senha, foto)
+            VALUES(?,?,?,?)`,
+            [id, login, email, senha, foto],
+            (error) => {
+                if(error) {
+                    reject(error);
+                } else {
+                    resolve({
+                        id: this.lastID,
+                        ...novoUsuario
+                    });
                 }
-                // resolve with the created record id and original data
-                resolve({ id: this.lastID, ...novoUsuario, message: 'Usuário criado com sucesso!' });
             }
         );
     });
 }
 
-function findUsuarioByEmail(email) {
+function findUsuarioByIdRepository(id) {
     return new Promise((resolve, reject) => {
         db.get(
-            `SELECT id, login, email, senha, foto 
-            FROM usuarios 
-            WHERE email = ?`,
-            [email],
-            (err, row) => {
-                if (err) {
-                    return reject(err);
+            `SELECT 
+                id, login, email, senha, foto
+            FROM usuario
+            WHERE id = ?`,
+            [id],
+            (error, row) => {
+                if(error) {
+                    reject(error);
+                } else {
+                    resolve(row);
                 }
-                resolve(row);
+            }
+        )        
+    });
+
+}
+
+function findAllUsuarioRepository() {
+    return new Promise((resolve, reject) => {
+        db.all(
+            `SELECT 
+                * 
+            FROM usuario`,
+            [],
+            (error, row) => {
+                if(error) {
+                    reject(error);
+                } else {
+                    resolve(row);
+                }
+            }
+        )
+    });
+
+}
+
+function updateUsuarioRepository(id, cliente) {
+    return new Promise((resolve, reject) => {
+
+        const {
+            login, 
+            email, 
+            senha, 
+            foto
+        } = cliente;
+
+        db.run(
+            `UPDATE usuario SET 
+                login = ?, 
+                email = ?, 
+                senha = ?, 
+                foto = ?
+            WHERE id = ?`,
+            [login, email, senha, foto, id],
+            (error) => {
+                if(error) {
+                    reject(error);
+                } else {
+                    resolve({
+                        id,
+                        ...usuario
+                    });
+                }
+            }
+        );
+    });
+}
+
+function deleteUsuarioRepository(id) {
+    return new Promise((resolve, reject) => {
+        db.run(
+            `DELETE FROM usuario
+            WHERE id = ?`,
+            [id],
+            (error) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve({
+                        message: "Usuário deletado com sucesso",
+                    });
+                }
             }
         );
     });
@@ -48,6 +131,8 @@ function findUsuarioByEmail(email) {
 
 export default {
     createUsuarioRepository,
-    findUsuarioByEmail
+    findUsuarioByIdRepository,
+    findAllUsuarioRepository,
+    updateUsuarioRepository,
+    deleteUsuarioRepository
 }
-;
