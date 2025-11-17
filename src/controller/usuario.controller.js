@@ -4,9 +4,9 @@ async function createUsuarioController(req, res) {
     const novoUsuario = req.body;
     try{
         const usuario = await usuarioService.createUsuarioService(novoUsuario);
-        res.status(201).json(usuario);
+        res.status(201).send({usuario});
     } catch (error) {
-        res.status(400).send(error.message );
+       return res.status(400).send(error.message );
     }
 }
 
